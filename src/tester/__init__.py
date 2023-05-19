@@ -40,8 +40,9 @@ def cross_validate(n_splits, model, X, y, verbose=False):
 
 def load_dataset():
     df = pd.read_csv("data/house-price-data.csv")
-    X, y = df.loc[:, df.columns != "price"], df["price"]
-    X = X.drop(["date", "street", "city", "statezip", "country"], axis=1, inplace=False)
+    one_hot_encoded_data = pd.get_dummies(df, columns=['city'])
+    X, y = one_hot_encoded_data.loc[:, one_hot_encoded_data.columns != "price"], one_hot_encoded_data["price"]
+    X = X.drop(["date", "street", "statezip", "country"], axis=1, inplace=False)
     X = (X - X.mean()) / X.std()
     y = (y - y.mean()) / y.std()
     return X, y
