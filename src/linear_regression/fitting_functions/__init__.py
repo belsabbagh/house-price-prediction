@@ -49,7 +49,10 @@ def gradient_descent(
     verbose=False,
 ):
     pred = pred or (lambda x, w: x.dot(w))
-    weights = least_squares(X, y)
+    try:
+        weights = least_squares(X, y)
+    except np.linalg.LinAlgError:
+        weights = np.zeros(X.shape[1])
     n, _ = X.shape
     i, prev_cost, cost = 1, None, None
     while not found_min(cost, prev_cost, threshold, max_iter, i):

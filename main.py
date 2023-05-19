@@ -10,9 +10,8 @@ def get_price(y):
 
 if __name__ == "__main__":
     models = {
-        "GDLinearRegression": GDLinearRegression(learning_rate=0.05, threshold=1e-9),
-        "LinearRegression": LinearRegression(),
         "SklearnLinearRegression": SklearnLinearRegression(),
+        "GDLinearRegression": GDLinearRegression(learning_rate=0.5, threshold=1e-4, verbose=True),
     }
     for name, model in models.items():
         print(f"Testing {name}")
