@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import KFold
+from sklearn.preprocessing import OneHotEncoder
 
 
 def mse(y_pred, y):
@@ -40,11 +41,15 @@ def cross_validate(n_splits, model, X, y, verbose=False):
 
 def load_dataset():
     df = pd.read_csv("data/house-price-data.csv")
-    one_hot_encoded_data = pd.get_dummies(df, columns=['city'])
-    X, y = one_hot_encoded_data.loc[:, one_hot_encoded_data.columns != "price"], one_hot_encoded_data["price"]
-    X = X.drop(["date", "street", "statezip", "country"], axis=1, inplace=False)
+    df['city'] = df['city'].astype('category')
+    df['city_enc'] = df['city'].cat.codes
+    enc = OneHotEncoder()
+    enc_data = pd.DataFrame(enc.fit_transform(df[['city_enc']]).toarray())
+    X, y = df.loc[:, df.columns != "price"], df["price"]
+    X = X.drop(["date", "street", "city", "statezip", "country"], axis=1, inplace=False)
     X = (X - X.mean()) / X.std()
     y = (y - y.mean()) / y.std()
+    X = X.join(enc_data)
     return X, y
 
 
