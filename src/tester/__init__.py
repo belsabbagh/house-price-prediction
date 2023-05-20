@@ -40,20 +40,17 @@ def cross_validate(n_splits, model, X, y, verbose=False):
     return scores
 
 
-def load_dataset():
+def load_dataset(preprocess=None):
+    if preprocess is None:
+        preprocess = lambda x: x
     df = pd.read_csv("data/house-price-data.csv")
     df = df[(np.abs(stats.zscore(df["price"])) < 2.8)]
-    enc_data = pd.get_dummies(df["city"])
-    X, y = df.loc[:, df.columns != "price"], df["price"]
-    X = X.drop(["date", "street", "city", "statezip", "country"], axis=1, inplace=False)
-    X = (X - X.mean()) / X.std()
-    y = (y - y.mean()) / y.std()
-    X = X.join(enc_data)
+    X, y = preprocess(df)
     return X, y
 
 
-def base_test(model):
-    X, y = load_dataset()
+def base_test(model, preprocess=None):
+    X, y = load_dataset(preprocess)
     scores = cross_validate(5, model, X, y)
     for k, v in scores.items():
         print(f"{k}: {format_score(v)}")
