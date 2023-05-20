@@ -1,3 +1,4 @@
+import warnings
 import numpy as np
 import pandas as pd
 import scipy
@@ -14,7 +15,7 @@ def least_squares(X: pd.DataFrame, y):
 
     DISCLAIMER: I know it's very sensitive to outliers but it's so much faster than gradient descent.
     """
-    return scipy.linalg.lstsq(X, y)[0] # np.linalg.inv(X.T.dot(X)).dot(X.T).dot(y)
+    return scipy.linalg.lstsq(X, y)[0]  # np.linalg.inv(X.T.dot(X)).dot(X.T).dot(y)
 
 
 def found_min(cost, prev_cost, threshold, max_iter, i):
@@ -53,6 +54,7 @@ def gradient_descent(
     try:
         weights = least_squares(X, y)
     except np.linalg.LinAlgError:
+        warnings.warn("Least squares failed to initialize weights.")
         weights = np.zeros(X.shape[1])
     n, _ = X.shape
     i, prev_cost, cost = 1, None, None
