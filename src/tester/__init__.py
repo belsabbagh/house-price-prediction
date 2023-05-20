@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from scipy import stats
 from sklearn.model_selection import KFold
 from sklearn.preprocessing import OneHotEncoder
 
@@ -43,6 +44,7 @@ def load_dataset(preprocess=None):
     if preprocess is None:
         preprocess = lambda x: x
     df = pd.read_csv("data/house-price-data.csv")
+    df = df[(np.abs(stats.zscore(df["price"])) < 2.8)]
     X, y = preprocess(df)
     return X, y
 

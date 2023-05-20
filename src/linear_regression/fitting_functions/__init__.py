@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import scipy
 
 
 def add_constant(x: np.ndarray):
@@ -13,7 +14,7 @@ def least_squares(X: pd.DataFrame, y):
 
     DISCLAIMER: I know it's very sensitive to outliers but it's so much faster than gradient descent.
     """
-    return np.linalg.inv(X.T.dot(X)).dot(X.T).dot(y)
+    return scipy.linalg.lstsq(X, y)[0] # np.linalg.inv(X.T.dot(X)).dot(X.T).dot(y)
 
 
 def found_min(cost, prev_cost, threshold, max_iter, i):
@@ -49,7 +50,10 @@ def gradient_descent(
     verbose=False,
 ):
     pred = pred or (lambda x, w: x.dot(w))
-    weights = least_squares(X, y)
+    try:
+        weights = least_squares(X, y)
+    except np.linalg.LinAlgError:
+        weights = np.zeros(X.shape[1])
     n, _ = X.shape
     i, prev_cost, cost = 1, None, None
     while not found_min(cost, prev_cost, threshold, max_iter, i):
