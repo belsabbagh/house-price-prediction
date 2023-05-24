@@ -12,3 +12,14 @@ def city_price_encoding(df):
     X = (X - X.mean()) / X.std()
     y = (y - y.mean()) / y.std()
     return X, y
+
+
+def frequency_encoding(df):
+    df = df[(np.abs(stats.zscore(df["price"])) < 2.9)]
+    df["city_counts"] = df["city"].map(df["city"].value_counts())
+    df = df[df["city_counts"] > 100]
+    X, y = df.loc[:, df.columns != "price"], df["price"]
+    X = X.drop(["date", "street", "statezip", "country", "city"], axis=1, inplace=False)
+    X = (X - X.mean()) / X.std()
+    y = (y - y.mean()) / y.std()
+    return X, y
