@@ -27,6 +27,7 @@ def frequency_encoding(df):
     y = (y - y.min()) / (y.max() - y.min())
     return X, y
 
+
 def one_hot_encoding(df):
     X, y = df.loc[:, df.columns != "price"], df["price"]
     X = pd.get_dummies(X, columns=["city"])
